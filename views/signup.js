@@ -8,6 +8,8 @@ async function signup(name,email,password){
             password
         }
         await axios.post("http://localhost:3000/user/signup",user)
+        alert("Sign Up Successfull")
+        window.location.href="login.html"
     }
     catch(err){
         const p=document.createElement('p')
