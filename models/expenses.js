@@ -20,7 +20,10 @@ const Expenses=sequelize.define('expenses',{
     category:{
         type:Sequelize.STRING,
         allowNull:false
+    },
+    userID:{
+        type:Sequelize.INTEGER
     }
 })
 
-module.exports=Expenses
+module.exports=Expenses 

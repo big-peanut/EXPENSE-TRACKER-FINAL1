@@ -11,6 +11,7 @@ async function login(email, password) {
 
         if (response.data.message) {
             alert("User login successful");
+            localStorage.setItem('token',response.data.token)
             window.location.href="expense.html"
         } else {
             const p=document.createElement('p')

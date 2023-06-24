@@ -9,7 +9,8 @@ exports.addexpense=async(req,res,next)=>{
         const data=await Expenses.create({
             amount:amount,
             description:description,
-            category:category
+            category:category,
+            userID:req.user.id
         })
         res.json({dataValues:data})
     }
@@ -20,7 +21,7 @@ exports.addexpense=async(req,res,next)=>{
 
 exports.getexpense=async(req,res,next)=>{
     try{
-        const expenses=await Expenses.findAll()
+        const expenses=await Expenses.findAll({where:{userID:req.user.id}})
         res.json({allexpenses:expenses})
     }
     catch(err){
@@ -34,7 +35,7 @@ exports.delexpense=async(req,res,next)=>{
             console.log("id is missing")
         }
         const id=req.params.id
-        await Expenses.destroy({where:{id:id}})
+        await Expenses.destroy({where:{id:id , userID:req.user.id}})
         res.sendStatus(200)
         
     }
