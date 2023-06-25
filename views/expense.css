@@ -79,4 +79,19 @@ li button {
     margin-left: 5px;
 }
 
+#buypremium{
+    background-color: #f5b209;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width:100%;
+    margin-top: 10px;
+}
+
+#buypremium:hover{
+    background-color: #087f0a;
+}
+
 

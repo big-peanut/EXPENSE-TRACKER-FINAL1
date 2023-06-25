@@ -1,6 +1,33 @@
 const expenseform = document.getElementById('expenseform');
 const expenselist = document.getElementById('expenselist');
 
+document.getElementById('buypremium').onclick=async function(e){
+    const token=localStorage.getItem('token')
+    const response=await axios.get("http://localhost:3000/purchase/premium",{headers:{'Authorization':token}})
+    console.log(response)
+
+    var options={
+        "key":response.data.key_id,
+        "order_id":response.data.order_id,
+        "handler": async function(response){
+            await axios.post("http://localhost:3000/purchase/updatepremium",{
+                order_id:options.order_id,
+                payment_id:response.razorpay_payment_id},
+                {headers:{'Authorization':token}})
+
+                alert("YOU ARE A PREMIUM USER")
+        }
+    }
+    const rzpl=new Razorpay(options)
+    rzpl.open()
+    e.preventDefault()
+
+    rzpl.on('payment.failed',function(response){
+        console.log(response)
+        alert('something went wrong')
+    })
+}
+
 function displayexpense(expenses) {
     expenselist.innerHTML = "";
 
