@@ -55,3 +55,21 @@ exports.login = async (req, res, next) => {
         res.status(500).json({ error: "Failed to login" });
     }
 };
+
+exports.getuser = async (req, res, next) => {
+    try {
+        const user = await Users.findOne({ where: { id: req.user.id } });
+        if (user) {
+            res.json({ user: user });
+        } else {
+            res.status(404).json({ error: "User not found" });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: "Failed to fetch user" });
+    }
+};
+
+
+
+

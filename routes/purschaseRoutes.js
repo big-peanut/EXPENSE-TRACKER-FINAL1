@@ -6,6 +6,6 @@ const router=express.Router()
 
 router.get('/purchase/premium',middleware.authenticate,controller.purchasepremium)
 
-router.post('/puchase/updatepremium',middleware.authenticate)
+router.post('/purchase/updatepremium',middleware.authenticate,controller.updatepurchasepremium)
 
 module.exports=router
