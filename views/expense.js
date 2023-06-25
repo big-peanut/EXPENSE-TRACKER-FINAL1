@@ -1,6 +1,32 @@
 const expenseform = document.getElementById('expenseform');
 const expenselist = document.getElementById('expenselist');
 
+async function showleaderboard() {
+    const token = localStorage.getItem('token')
+    const leaderboard = await axios.get("http://localhost:3000/premium/leaderboard", { headers: { 'Authorization': token } })
+    //console.log(leaderboard.data)
+    const leaderboardData = leaderboard.data;
+
+    const leaderboardList = document.createElement('ul');
+    leaderboardList.classList.add('leaderboard-list');
+
+    leaderboardData.forEach((entry) => {
+        const listItem = document.createElement('li');
+        listItem.textContent = `Name: ${entry.name} | Total Cost: ${entry.total_cost}`;
+        leaderboardList.appendChild(listItem);
+    });
+
+    // Clear any existing leaderboard list
+    const existingLeaderboardList = document.querySelector('.leaderboard-list');
+    if (existingLeaderboardList) {
+        existingLeaderboardList.remove();
+    }
+
+    // Append the new leaderboard list to the DOM
+    document.body.appendChild(leaderboardList);
+}
+
+
 async function checkUserPremiumStatus(token) {
     try {
         const response = await axios.get("http://localhost:3000/user/getuser", { headers: { 'Authorization': token } });
@@ -62,11 +88,17 @@ function displayexpense(expenses, isPremium) {
             delexpense(expenses.allexpenses[i].id);
         });
     }
+    const leaderboardBtn = document.createElement('button');
+    leaderboardBtn.textContent = 'Leaderboard';
     if (isPremium) {
         const premiumMsg = document.createElement('p');
         premiumMsg.textContent = "YOU ARE A PREMIUM MEMBER";
         premiumContainer.appendChild(premiumMsg);
         document.getElementById('buypremium').style.display = "none";
+        premiumContainer.appendChild(leaderboardBtn);
+        leaderboardBtn.addEventListener('click', () => {
+            showleaderboard()
+        })
     }
     document.body.appendChild(premiumContainer)
 }
@@ -129,6 +161,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const isPremium = await checkUserPremiumStatus(token); // Wait for premium status
         const expense = await axios.get("http://localhost:3000/expense/getexpense", { headers: { 'Authorization': token } });
         displayexpense(expense.data, isPremium); // Display expenses with premium status
+        showleaderboard()
     } catch (err) {
         console.log(err);
     }

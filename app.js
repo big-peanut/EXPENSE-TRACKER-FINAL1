@@ -2,6 +2,7 @@ const express=require('express')
 const userRoutes=require('./routes/userRoutes')
 const expenseRoutes=require('./routes/expenseRoutes')
 const purchaseRoutes=require('./routes/purschaseRoutes')
+const premiumRoutes=require('./routes/premiumRoutes')
 const sequelize=require('./util/database')
 const bodyparser=require('body-parser')
 const cors=require('cors')
@@ -20,6 +21,8 @@ app.use(userRoutes)
 app.use(expenseRoutes)
 
 app.use(purchaseRoutes)
+
+app.use(premiumRoutes)
 
 Users.hasMany(Expenses)
 Expenses.belongsTo(Users)
