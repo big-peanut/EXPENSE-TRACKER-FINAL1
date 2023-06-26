@@ -4,9 +4,8 @@ const forgotpassword = document.getElementById('forgotpassword')
 forgotpassword.addEventListener('click', async () => {
     try {
         const email = prompt("Enter your email")
-        if (email) {
-            await axios.use('/password/forgotpassword')
-        }
+            await axios.post("http://localhost:3000/password/forgotpassword", {email});
+            alert("Password reset link sent to your email");
     }
     catch(err){
         console.log(err)
