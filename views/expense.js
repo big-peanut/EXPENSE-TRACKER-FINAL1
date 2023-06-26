@@ -2,30 +2,31 @@ const expenseform = document.getElementById('expenseform');
 const expenselist = document.getElementById('expenselist');
 
 async function showleaderboard() {
-    const token = localStorage.getItem('token')
-    const leaderboard = await axios.get("http://localhost:3000/premium/leaderboard", { headers: { 'Authorization': token } })
-    //console.log(leaderboard.data)
-    const leaderboardData = leaderboard.data;
+    const token = localStorage.getItem('token');
+    const isPremium = await checkUserPremiumStatus(token);
 
-    const leaderboardList = document.createElement('ul');
-    leaderboardList.classList.add('leaderboard-list');
+    const leaderboardList = document.querySelector('.leaderboard-list');
 
-    leaderboardData.forEach((entry) => {
-        const listItem = document.createElement('li');
-        listItem.textContent = `Name: ${entry.name} | Total Cost: ${entry.total_cost}`;
-        leaderboardList.appendChild(listItem);
-    });
+    if (isPremium && !leaderboardList) {
+        const leaderboard = await axios.get("http://localhost:3000/premium/leaderboard", { headers: { 'Authorization': token } });
+        const leaderboardData = leaderboard.data;
 
-    // Clear any existing leaderboard list
-    const existingLeaderboardList = document.querySelector('.leaderboard-list');
-    if (existingLeaderboardList) {
-        existingLeaderboardList.remove();
+        const leaderboardList = document.createElement('ul');
+        leaderboardList.classList.add('leaderboard-list');
+
+        leaderboardData.forEach((entry) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = `Name: ${entry.name} | Total Cost: ${entry.total_cost}`;
+            leaderboardList.appendChild(listItem);
+        });
+
+        // Append the new leaderboard list to the DOM
+        document.body.appendChild(leaderboardList);
+    } else if (!isPremium && leaderboardList) {
+        // Remove the leaderboard list from the DOM
+        leaderboardList.remove();
     }
-
-    // Append the new leaderboard list to the DOM
-    document.body.appendChild(leaderboardList);
 }
-
 
 async function checkUserPremiumStatus(token) {
     try {
@@ -54,7 +55,7 @@ document.getElementById('buypremium').onclick = async function (e) {
 
             alert("YOU ARE A PREMIUM USER");
             document.getElementById('buypremium').style.display = "none";
-            window.location.reload()
+            window.location.reload();
         }
     };
     var rzp1 = new Razorpay(options);
@@ -63,7 +64,7 @@ document.getElementById('buypremium').onclick = async function (e) {
 
     rzp1.on('payment.failed', function (response) {
         console.log(response);
-        alert('something went wrong');
+        alert('Something went wrong');
     });
 };
 
@@ -88,19 +89,22 @@ function displayexpense(expenses, isPremium) {
             delexpense(expenses.allexpenses[i].id);
         });
     }
+
     const leaderboardBtn = document.createElement('button');
     leaderboardBtn.textContent = 'Leaderboard';
+
     if (isPremium) {
         const premiumMsg = document.createElement('p');
         premiumMsg.textContent = "YOU ARE A PREMIUM MEMBER";
         premiumContainer.appendChild(premiumMsg);
         document.getElementById('buypremium').style.display = "none";
         premiumContainer.appendChild(leaderboardBtn);
-        leaderboardBtn.addEventListener('click', () => {
-            showleaderboard()
-        })
+        leaderboardBtn.addEventListener('click', async() => {
+            await showleaderboard();
+        });
     }
-    document.body.appendChild(premiumContainer)
+
+    document.body.appendChild(premiumContainer);
 }
 
 async function delexpense(id) {
@@ -149,7 +153,7 @@ expenseform.addEventListener('submit', (e) => {
 
     addexpense(amount, description, category);
 
-    // Move the code to reset the form fields here
+    // Reset the form fields
     document.getElementById('amount').value = '';
     document.getElementById('description').value = '';
     document.getElementById('category').value = '';
@@ -161,7 +165,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const isPremium = await checkUserPremiumStatus(token); // Wait for premium status
         const expense = await axios.get("http://localhost:3000/expense/getexpense", { headers: { 'Authorization': token } });
         displayexpense(expense.data, isPremium); // Display expenses with premium status
-        showleaderboard()
+        
     } catch (err) {
         console.log(err);
     }
