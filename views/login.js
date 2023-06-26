@@ -1,4 +1,12 @@
 const loginform = document.getElementById('loginform')
+const forgotpassword=document.getElementById('forgotpassword')
+
+forgotpassword.addEventListener('click',async ()=>{
+    const email=prompt("Enter your email")
+    if(email){
+        
+    }
+})
 
 async function login(email, password) {
     try {
