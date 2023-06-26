@@ -16,7 +16,7 @@ async function showleaderboard() {
 
         leaderboardData.forEach((entry) => {
             const listItem = document.createElement('li');
-            listItem.textContent = `Name: ${entry.name} | Total Cost: ${entry.total_cost}`;
+            listItem.textContent = `Name: ${entry.name} | Total Cost: ${entry.totalExpense}`;
             leaderboardList.appendChild(listItem);
         });
 
