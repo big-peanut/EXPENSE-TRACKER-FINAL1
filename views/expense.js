@@ -1,6 +1,24 @@
 const expenseform = document.getElementById('expenseform');
 const expenselist = document.getElementById('expenselist');
 
+async function download() {
+    try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get('http://localhost:3000/user/download', { headers: { "Authorization": token } })
+
+
+        //the bcakend is essentially sending a download link
+        //  which if we open in browser, the file would download
+        var a = document.createElement("a");
+        a.href = response.data.fileURL;
+        a.download = 'myexpense.txt';
+        a.click();
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+
 async function showleaderboard() {
     const token = localStorage.getItem('token');
     const isPremium = await checkUserPremiumStatus(token);
@@ -99,7 +117,7 @@ function displayexpense(expenses, isPremium) {
         premiumContainer.appendChild(premiumMsg);
         document.getElementById('buypremium').style.display = "none";
         premiumContainer.appendChild(leaderboardBtn);
-        leaderboardBtn.addEventListener('click', async() => {
+        leaderboardBtn.addEventListener('click', async () => {
             await showleaderboard();
         });
     }
@@ -165,7 +183,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const isPremium = await checkUserPremiumStatus(token); // Wait for premium status
         const expense = await axios.get("http://localhost:3000/expense/getexpense", { headers: { 'Authorization': token } });
         displayexpense(expense.data, isPremium); // Display expenses with premium status
-        
+
     } catch (err) {
         console.log(err);
     }

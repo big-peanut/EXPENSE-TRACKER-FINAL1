@@ -1,14 +1,16 @@
 const uuid = require('uuid');
 const Sib = require('sib-api-v3-sdk');
 const bcrypt = require('bcrypt');
+const dotenv=require('dotenv')
 
 const Users = require('../models/users');
 const Forgotpassword = require('../models/forgotpwd');
+dotenv.config()
 
 const forgotpassword = async (req, res, next) => {
     try {
         const email = req.body.email;
-        console.log('email===', email);
+        
         const user=await Users.findOne({where:{email}})
         
         const id=uuid.v4()
@@ -17,7 +19,7 @@ const forgotpassword = async (req, res, next) => {
 
         const client=Sib.ApiClient.instance
         const apiKey=client.authentications['api-key']
-        apiKey.apiKey='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'
+        apiKey.apiKey=process.env.BREVO_API_KEY
 
         const transEmailApi=new Sib.TransactionalEmailsApi()
 
