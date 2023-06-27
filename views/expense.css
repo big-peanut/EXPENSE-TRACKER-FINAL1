@@ -115,4 +115,29 @@ p{
     margin-left: 88px;
 }
 
+#downloadexpense{
+    background-color: #f5b209;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    width:10%;
+    margin-top: 10px;
+    margin-left: 585px;
+}
+#leaderboardbtn{
+    background-color: #f5b209;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    width:20%;
+    margin-top: 10px;
+    margin-left: 550px;
+    margin-right: 200px;
+}
+
+
 

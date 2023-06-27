@@ -6,9 +6,12 @@ async function download() {
         const token = localStorage.getItem('token')
         const response = await axios.get('http://localhost:3000/user/download', { headers: { "Authorization": token } })
 
+        const isPremium = await checkUserPremiumStatus(token);
+        if (!isPremium) {
+            alert("subscribe to premium membership to download file");
+            return;
+        }
 
-        //the bcakend is essentially sending a download link
-        //  which if we open in browser, the file would download
         var a = document.createElement("a");
         a.href = response.data.fileURL;
         a.download = 'myexpense.txt';
@@ -109,6 +112,7 @@ function displayexpense(expenses, isPremium) {
     }
 
     const leaderboardBtn = document.createElement('button');
+    leaderboardBtn.id="leaderboardbtn"
     leaderboardBtn.textContent = 'Leaderboard';
 
     if (isPremium) {
