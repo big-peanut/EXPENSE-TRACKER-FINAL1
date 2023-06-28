@@ -1,5 +1,8 @@
 const expenseform = document.getElementById('expenseform');
 const expenselist = document.getElementById('expenselist');
+const pagediv=document.getElementById('page')
+
+
 
 async function download() {
     try {
@@ -91,23 +94,22 @@ document.getElementById('buypremium').onclick = async function (e) {
 
 function displayexpense(expenses, isPremium) {
     expenselist.innerHTML = "";
-
     const premiumContainer = document.createElement('div');
     premiumContainer.style.position = 'absolute';
     premiumContainer.style.top = '10px';
     premiumContainer.style.right = '10px';
 
-    for (let i = 0; i < expenses.allexpenses.length; i++) {
+    for (let i = 0; i < expenses.length; i++) {
         const li = document.createElement('li');
-        li.textContent = `AMOUNT : Rs.${expenses.allexpenses[i].amount} ==> DESCRIPTION : ${expenses.allexpenses[i].description} ==> CATEGORY : ${expenses.allexpenses[i].category}`;
+        li.textContent = `AMOUNT : Rs.${expenses[i].amount} ==> DESCRIPTION : ${expenses[i].description} ==> CATEGORY : ${expenses[i].category}`;
         expenselist.appendChild(li);
-
+        console.log(expenses[i].id)
         const delbtn = document.createElement('button');
         delbtn.textContent = "Remove";
         li.appendChild(delbtn);
 
         delbtn.addEventListener('click', () => {
-            delexpense(expenses.allexpenses[i].id);
+            delexpense(expenses[i].id);
         });
     }
 
@@ -139,13 +141,15 @@ async function delexpense(id) {
     }
 }
 
-async function getExpense() {
+async function getExpense(page=1) {
     try {
         const token = localStorage.getItem('token');
         const isPremium = await checkUserPremiumStatus(token); // Wait for premium status
-        const response = await axios.get("http://localhost:3000/expense/getexpense", { headers: { 'Authorization': token } });
-        let expenses = response.data;
+        const response = await axios.get(`http://localhost:3000/expense/getexpense?page=${page}&pagesize=${3}`, { headers: { 'Authorization': token } });
+        let expenses = response.data.expenses;
+        const {...pageData}=response.data
         displayexpense(expenses, isPremium); // Display expenses with premium status
+        pagination(pageData)
     } catch (err) {
         console.log(err);
     }
@@ -160,11 +164,46 @@ async function addexpense(amount, description, category) {
         };
         const token = localStorage.getItem('token');
         await axios.post("http://localhost:3000/expense/addexpense", expense, { headers: { 'Authorization': token } });
-        getExpense(); // Retrieve and display updated expenses
+        getExpense(page); // Retrieve and display updated expenses
     } catch (err) {
         console.log(err);
     }
 }
+
+function pagination({
+    currentPage,
+    hasNextPage,
+    nextPage,
+    hasPreviousPage,
+    previousPage,
+    lastPage
+}){
+    pagediv.innerHTML=""
+    if(hasPreviousPage){
+        const btn2=document.createElement('button')
+        btn2.innerHTML=previousPage
+        btn2.addEventListener('click',()=>{
+            getExpense(previousPage)
+        })
+        pagediv.appendChild(btn2)
+    }
+    const btn1=document.createElement('button')
+    btn1.innerHTML=currentPage
+    btn1.addEventListener('click',()=>{
+        getExpense(currentPage)
+    })
+    pagediv.appendChild(btn1)
+
+    if(hasNextPage){
+        const btn3=document.createElement('button')
+        btn3.innerHTML=nextPage
+        btn3.addEventListener('click',()=>{
+            getExpense(nextPage)
+        })
+        pagediv.appendChild(btn3)
+    }
+}
+
 
 expenseform.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -183,11 +222,13 @@ expenseform.addEventListener('submit', (e) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        const page=1
         const token = localStorage.getItem('token');
         const isPremium = await checkUserPremiumStatus(token); // Wait for premium status
-        const expense = await axios.get("http://localhost:3000/expense/getexpense", { headers: { 'Authorization': token } });
-        displayexpense(expense.data, isPremium); // Display expenses with premium status
-
+        const response = await axios.get(`http://localhost:3000/expense/getexpense?page=${page}`, { headers: { 'Authorization': token } });
+        const {...pageData}=response.data
+        displayexpense(response.data.expenses, isPremium); // Display expenses with premium status
+        pagination(pageData)
     } catch (err) {
         console.log(err);
     }
