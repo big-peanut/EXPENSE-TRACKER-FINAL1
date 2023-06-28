@@ -12,6 +12,11 @@ const Expenses = require('./models/expenses')
 const Order = require('./models/orders')
 const Forgotpassword=require('./models/forgotpwd')
 const dotenv = require('dotenv');
+const helmet=require('helmet')
+const compression=require('compression')
+const fs=require('fs')
+const morgan=require('morgan')
+const path=require('path')
 
 const app=express()
 
@@ -31,6 +36,14 @@ app.use(purchaseRoutes)
 app.use(premiumRoutes)
 
 app.use(resetpwdRoutes)
+
+const accessLogStream=fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'})
+
+app.use(helmet())
+
+app.use(compression())
+
+app.use(morgan('combined',{stream:accessLogStream}))
 
 Users.hasMany(Expenses)
 Expenses.belongsTo(Users)
