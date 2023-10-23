@@ -1,10 +1,13 @@
-const express=require('express')
-const controller=require('../controller/userController')
+// Import required modules and packages
+const express = require('express'); // Import the Express.js framework
+const controller = require('../controller/userController'); // Import the user controller
 
-const router=express.Router()
+// Create a new Express Router instance
+const router = express.Router();
 
-router.post('/signup',controller.signup)
+// Define routes for user-related actions (sign up and login)
+router.post('/signup', controller.signup); // Route for user registration
+router.post('/login', controller.login); // Route for user login
 
-router.post('/login',controller.login)
-
-module.exports=router
+// Export the router to make it available for use in other parts of your application
+module.exports = router;
