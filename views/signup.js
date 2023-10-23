@@ -1,31 +1,39 @@
-const signupform=document.getElementById('signupform')
+// Get a reference to the signup form element in the HTML
+const signupform = document.getElementById('signupform');
 
-async function signup(name,email,password){
-    try{
-        let user={
+// Function for user signup
+async function signup(name, email, password) {
+    try {
+        let user = {
             name,
             email,
             password
-        }
-        await axios.post("http://localhost:3000/signup",user)
-    }
-    catch(err){
-        const p=document.createElement('p')
-        p.textContent="Email already registered, Please Login"
-        signupform.appendChild(p)
+        };
+
+        // Send a POST request to the server for user signup
+        await axios.post("http://localhost:3000/signup", user);
+    } catch (err) {
+        // Handle errors related to signup, e.g., email already registered
+        const p = document.createElement('p');
+        p.textContent = "Email already registered, Please Login";
+        signupform.appendChild(p);
     }
 }
 
-signupform.addEventListener('submit',(e)=>{
-    e.preventDefault()
+// Event listener for form submission
+signupform.addEventListener('submit', (e) => {
+    e.preventDefault();
 
-    let name=document.getElementById('name').value
-    let email=document.getElementById('email').value
-    let password=document.getElementById('password').value
+    // Get the user input values from the form
+    let name = document.getElementById('name').value;
+    let email = document.getElementById('email').value;
+    let password = document.getElementById('password').value;
 
-    signup(name,email,password)
+    // Call the 'signup' function with the provided name, email, and password
+    signup(name, email, password);
 
-    name=""
-    email=""
-    password=""
-})
+    // Clear the input fields
+    name = "";
+    email = "";
+    password = "";
+});
